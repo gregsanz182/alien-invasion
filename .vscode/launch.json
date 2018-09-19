@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Alien Ivasion",
+            "name": "Alien Invasion",
             "type": "python",
             "request": "launch",
             "stopOnEntry": false,
