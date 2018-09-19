@@ -8,9 +8,10 @@ class Command():
         self.min_y = col
         self.max_x = row
         self.max_y = col
-        self.area = scale*scale
+        self.area = 0
         self.shoot_pos = 0, 0
         self.name = name
+        self.calc_area_and_aim(scale)
 
     def add_corner(self, row, col):
         if(row < self.min_x):
@@ -24,13 +25,20 @@ class Command():
             self.max_y = col
     
     def calc_area_and_aim(self, scale):
-        self.area = ((self.max_x - self.min_x) * (self.max_y - self.min_y) * scale)
+        x_real = self.min_x * scale
+        y_real = self.min_y * scale
+        h_real = (self.max_x + 1 - self.min_x) * scale
+        w_real = (self.max_y + 1 - self.min_y) * scale
+        self.area = h_real * w_real
         self.shoot_pos = (
-            ((self.min_x + self.max_x + 1) * scale)/2,
-                        ((self.min_y + self.max_y + 1)*scale)/2
+            x_real + (h_real / 2),
+            y_real + (w_real / 2)
         )
-    
+
     def __repr__(self):
+        return self.get_aim_string() + " " + str(self.min_x) + " " + str(self.min_y) + " " + str(self.max_x) + " " + str(self.max_y) + " " + str(self.area)
+
+    def get_aim_string(self):
         return "{0}:{1:.3f},{2:.3f}".format(self.name, self.shoot_pos[0], self.shoot_pos[1])
 
 class Ship():
@@ -66,10 +74,11 @@ class Ship():
             if self.__check_command(command_name, command):
                 layers_commands.append(command)
                 del self.commands[command_name]
+        
 
-        #sorting by area
-        layers_commands = sorted(layers_commands, key=lambda layer: layer.area)
         #sorting by name
+        layers_commands = sorted(layers_commands, key=lambda layer: layer.name)
+        #sorting by area
         layers_commands = sorted(layers_commands, key=lambda layer: layer.area)
 
         self.__remove_layer(layers_commands)
